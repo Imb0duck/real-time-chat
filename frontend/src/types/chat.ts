@@ -20,3 +20,5 @@ export type Channel = {
   participants: Set<number>;
   messages: Message[];
 };
+
+export type ChannelShortInfo = Pick<Channel, "id" | "name">;
