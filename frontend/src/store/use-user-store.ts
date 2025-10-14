@@ -1,5 +1,7 @@
 import { create, type StateCreator } from "zustand";
+import { socketService } from "../service/socket-service";
 import type { User } from "../types/chat";
+import { Routes } from "../consts";
 
 interface IInitialState {
     user: User | null;
@@ -24,7 +26,12 @@ const userStore: StateCreator<IUser> = ((set) => ({
         set({ isLoading: true });
 
         try{
+            const res = await fetch(`${Routes.Users}/${id}`);
+            if (!res.ok) throw new Error('Unable to sign in');
+            const user: User = await res.json();
 
+            set({ user });
+            socketService.connect(user.id);
         }catch(error){
             console.log(error);
             throw new Error('Unable to sign in');
@@ -33,7 +40,8 @@ const userStore: StateCreator<IUser> = ((set) => ({
         }
     },
     signOut: () => {
-        set({user: null});
+        set({ user: null });
+        socketService.disconnect();
     }
 }));
 

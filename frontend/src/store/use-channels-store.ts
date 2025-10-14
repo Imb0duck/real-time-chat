@@ -1,5 +1,7 @@
 import { create, type StateCreator } from "zustand";
+import { socketService } from "../service/socket-service";
 import type { ChannelShortInfo } from "../types/chat";
+import { Routes } from "../consts";
 
 interface IInitialState {
     channels: ChannelShortInfo[];
@@ -7,9 +9,10 @@ interface IInitialState {
 }
 
 interface IActions {
-    loadChannels: () => Promise<void>;
-    joinChannel: (id: number) => Promise<void>;
-    createChannel: () => Promise<void>;
+    loadChannels: (userId: number) => Promise<void>;
+    updateChannels: (userId: number) => void;
+    createChannel: (name: string, creatorId: number) => void;
+    stopUpdate: () => void;
 }
 
 interface IChannels extends IInitialState, IActions {}
@@ -21,11 +24,13 @@ const initialState: IInitialState = {
 
 const channelsStore: StateCreator<IChannels> = ((set) => ({
     ...initialState,
-    loadChannels: async () => {
+    loadChannels: async (userId: number) => {
         set({ isLoading: true });
 
         try{
-
+            const res = await fetch(`${Routes.Channels}?userId=${userId}`);
+            const data = await res.json();
+            set({ channels: data });
         }catch(error){
             console.log(error);
             throw new Error('Unable to load channels');
@@ -33,21 +38,17 @@ const channelsStore: StateCreator<IChannels> = ((set) => ({
             set({ isLoading: false });
         }
     },
-    joinChannel: async (id: number) => {
-        try{
-
-        }catch(error){
-            console.log(error);
-            throw new Error('Unable to join channel');
-        }
+    updateChannels: (userId: number) => {
+        socketService.onChannelsUpdated((list: ChannelShortInfo[]) => {
+            const userChannels = list.filter((ch) => ch.participants?.includes(userId));
+            set({ channels: userChannels });
+        });
     },
-    createChannel: async () => {
-        try{
-
-        }catch(error){
-            console.log(error);
-            throw new Error('Unable to create channel');
-        }
+    stopUpdate: () => {
+        socketService.offChannelsUpdated();
+    },
+    createChannel: (name: string, creatorId: number) => {
+        socketService.createChannel(name, creatorId);
     }
 }));
 
@@ -55,6 +56,7 @@ const useChannelsStore = create<IChannels>()(channelsStore);
 
 export const useActiveChannel = () => useChannelsStore((state) => state.channels);
 export const useIsLoading = () => useChannelsStore((state) => state.isLoading);
-export const loadChannels = () => useChannelsStore.getState().loadChannels();
-export const joinChannel = (id: number) => useChannelsStore.getState().joinChannel(id);
-export const createChannel = () => useChannelsStore.getState().createChannel();
+export const loadChannels = (userId: number) => useChannelsStore.getState().loadChannels(userId);
+export const updateChannels = (userId: number) => useChannelsStore.getState().updateChannels(userId);
+export const stopUpdate = () => useChannelsStore.getState().stopUpdate();
+export const createChannel = (name: string, creatorId: number) => useChannelsStore.getState().createChannel(name, creatorId);

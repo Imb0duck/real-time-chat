@@ -5,134 +5,208 @@ import { Server } from 'socket.io';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import type { Channel, Message, User } from './types/chat.ts';
+import type { Channel, User } from './types/chat.ts';
 import type { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from './types/event.ts';
+import { Events, Routes } from './consts.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Load mock users
 const users: User[] = JSON.parse(
   readFileSync(join(__dirname, "users.json"), "utf-8")
 );
 
-const channels: Record<string, Channel> = {};
+const channels: Record<string, Channel> = {}; // In-memory channels
+const userToSocket = new Map<number, string>(); //In-memory connections
 
 const app = express();
 app.use(express.json());
 
-// --- REST API
-app.get("/api/users", (req: Request, res: Response) => {
-  const q = (req.query.q as string | undefined)?.toLowerCase() ?? "";
-  const filtered = q
-    ? users.filter(
-        (u) =>
-          u.name.toLowerCase().includes(q) ||
-          u.username.toLowerCase().includes(q)
-      )
-    : users;
+//API routes
+app.get(Routes.Users, (req: Request, res: Response) => {
+  const qParam = req.query.q;
+  const q = (typeof qParam === "string") ? qParam.toLowerCase() : '';
+  const filtered = q ? users.filter((u) => u.name.toLowerCase().includes(q) || u.username.toLowerCase().includes(q)) : users;
   res.json(filtered);
 });
 
-app.get("/api/channels", (_req: Request, res: Response) => {
-  res.json(
-    Object.values(channels).map(({ id, name, creatorId }) => ({
-      id,
-      name,
-      creatorId,
-    }))
-  );
+app.get(`${Routes.Users}/:id`, (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+  const user = users.find(u => u.id === id);
+  if (!user) {
+    res.status(404).json({ error: "User not found" });
+    return;
+  }
+  res.json(user);
 });
 
-const server = http.createServer(app);
+app.get(Routes.Channels, (req, res) => {
+  const userId = Number(req.query.userId);
+  const list = Object.values(channels).filter((ch) => !userId || ch.participants.has(userId)).map(({ id, name, participants }) => ({
+      id,
+      name,
+      participants: Array.from(participants),
+    }));
+  res.json(list);
+});
 
+app.get(`${Routes.Channels}/:id`, (req, res) => {
+  const ch = channels[req.params.id];
+  if (!ch) return res.status(404).json({ error: "Not found" });
+  res.json({ id: ch.id, name: ch.name, creatorId: ch.creatorId, participants: Array.from(ch.participants), messages: ch.messages });
+});
+
+// HTTP + Socket.IO
+const server = http.createServer(app);
 const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(
   server,
   { cors: { origin: "*" } }
 );
 
-io.on("connection", (socket) => {
+io.on(Events.Connect, (socket) => {
   console.log("New socket connected:", socket.id);
 
-  socket.on("create-channel", ({ name, creator }) => {
+  // Create channel
+  socket.on(Events.Create, ({ name, creatorId }) => {
     const id = `chan_${Date.now()}`;
     channels[id] = {
       id,
       name,
-      creatorId: creator.id,
-      participants: new Set([creator.id]),
+      creatorId: creatorId,
+      participants: new Set([creatorId]),
       messages: [],
     };
-
-    io.emit(
-      "channels-updated",
-      Object.values(channels).map((c) => ({
-        id: c.id,
-        name: c.name,
-        creatorId: c.creatorId,
+    
+    socket.join(id);
+    io.emit(Events.Update, Object.values(channels).map((ch) => ({
+        id: ch.id,
+        name: ch.name,
+        participants: Array.from(ch.participants),
       }))
     );
   });
 
-  socket.on("join-channel", ({ channelId, user }) => {
+  // Join channel
+  socket.on(Events.Join, ({ channelId, userId }) => {
     const ch = channels[channelId];
     if (!ch) {
-      socket.emit("error", "Channel not found");
+      socket.emit(Events.Error, "Channel not found");
       return;
     }
 
-    ch.participants.add(user.id);
+    ch.participants.add(userId);
     socket.join(channelId);
 
-    io.to(channelId).emit("participants-updated", Array.from(ch.participants));
-    socket.emit("channel-history", ch.messages);
+    io.to(channelId).emit(Events.Participants, Array.from(ch.participants));
+    io.emit(Events.Update, Object.values(channels).map(({ id, name, participants }) => ({
+      id,
+      name,
+      participants: Array.from(participants),
+    })));
   });
 
-  socket.on("leave-channel", ({ channelId, userId }) => {
+  // Leave channel
+  socket.on(Events.Leave, ({ channelId, userId }) => {
     const ch = channels[channelId];
     if (!ch) return;
 
     ch.participants.delete(userId);
     socket.leave(channelId);
-    io.to(channelId).emit("participants-updated", Array.from(ch.participants));
+    io.to(channelId).emit(Events.Participants, Array.from(ch.participants));
+
+    io.emit(Events.Update, Object.values(channels).map(({ id, name, participants }) => ({
+      id,
+      name,
+      participants: Array.from(participants),
+    })));
   });
 
-  socket.on("message", ({ channelId, message }) => {
+  // Delete channel
+  socket.on(Events.Delete, ({ channelId, userId }) => {
+    const ch = channels[channelId];
+    if (!ch) {
+      socket.emit(Events.Error, "Channel not found");
+      return;
+    }
+
+    if (ch.creatorId !== userId) {
+      socket.emit(Events.Error, "No permission");
+      return;
+    }
+
+    io.to(channelId).emit(Events.Deleted, channelId);
+    const room = io.sockets.adapter.rooms.get(channelId);
+    if (room) {
+      for (const socketId of room) {
+        const s = io.sockets.sockets.get(socketId);
+        if (s) s.leave(channelId);
+      }
+    }
+
+    delete channels[channelId];
+    io.emit(Events.Update, Object.values(channels).map((ch) => ({
+      id: ch.id,
+      name: ch.name,
+      participants: Array.from(ch.participants),
+    })));
+  });
+
+  // Send message
+  socket.on(Events.Message, ({ channelId, message }) => {
     const ch = channels[channelId];
     if (!ch) return;
 
-    ch.messages.push(message);
-    io.to(channelId).emit("message", message);
+    const serverMessage = {
+      ...message,
+      timestamp: Date.now()
+    };
+
+    ch.messages.push(serverMessage);
+    io.to(channelId).emit(Events.Message, serverMessage);
   });
 
-  socket.on("kick-user", ({ channelId, targetId, requesterId }) => {
+  // Kick user
+  socket.on(Events.Kick, ({ channelId, targetId, requesterId }) => {
     const ch = channels[channelId];
     if (!ch) return;
-
     if (ch.creatorId !== requesterId) {
-      socket.emit("error", "No permission");
+      socket.emit(Events.Error, "No permission");
       return;
     }
 
     ch.participants.delete(targetId);
-    io.to(channelId).emit("participants-updated", Array.from(ch.participants));
+    io.to(channelId).emit(Events.Participants, Array.from(ch.participants));
 
     // notify kicked user
-    for (const [_, s] of io.sockets.sockets) {
-      if (s.data.userId === targetId) {
-        s.emit("kicked", { channelId });
-      }
+    const targetSocketId = userToSocket.get(targetId);
+    if (targetSocketId) {
+      io.to(targetSocketId).emit(Events.Kicked, channelId);
     }
   });
 
-  socket.on("identify", (userId) => {
+  socket.on(Events.Identify, (userId) => {
     socket.data.userId = userId;
+    userToSocket.set(userId, socket.id);
   });
 
-  socket.on("disconnect", () => {
+  socket.on(Events.Disconnect, () => {
+    const userId = socket.data.userId;
+    if (!userId) return;
+
+    for (const ch of Object.values(channels)) {
+      if (ch.participants.has(userId)) {
+        ch.participants.delete(userId);
+        io.to(ch.id).emit(Events.Participants, Array.from(ch.participants));
+      }
+    }
+
+    userToSocket.delete(userId);
     console.log("Socket disconnected:", socket.id);
   });
 });
 
+// Start server
 const PORT = 3001;
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

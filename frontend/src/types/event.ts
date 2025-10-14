@@ -17,7 +17,6 @@ export type ClientToServerEvents = {
 export type ServerToClientEvents = {
   "channels-updated": (channels: Array<{ id: string; name: string; participants: number[] }>) => void;
   "participants-updated": (participants: number[]) => void;
-  "channel-history": (messages: Message[]) => void;
   "channel-deleted": (channelId: string) => void;
   "message": (message: Message) => void;
   "kicked": (channelId: string) => void;
