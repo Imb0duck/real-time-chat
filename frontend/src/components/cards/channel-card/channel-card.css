@@ -1,0 +1,41 @@
+.channel-card {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background-color: #f8faff;
+  border: 1px solid #dfe6f5;
+  border-radius: 10px;
+  padding: 0.5rem 0.8rem;
+  margin-bottom: 0.5rem;
+  width: calc(100% - 1rem);
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.channel-card:hover {
+  background-color: #e9f1ff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.channel-card__image {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  object-fit: cover;
+  display: block;
+}
+
+.channel-card__info__name {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  max-width: 100%;
+  font-weight: 600;
+}

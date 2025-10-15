@@ -1,4 +1,4 @@
-.user__card {
+.user-card {
   display: flex;
   align-items: center;
   background-color: #fff;
@@ -11,15 +11,15 @@
   transition: background-color 0.2s, border 0.1s;
 }
 
-.user__card:hover {
+.user-card:hover {
   background-color: #a59797;
 }
 
-.user__card:active {
+.user-card:active {
   border: 2px solid #000;
 }
 
-.card__image {
+.user-card__image {
   width: 60px;
   height: 60px;
   border-radius: 50%;
@@ -28,19 +28,19 @@
   flex-shrink: 0;
 }
 
-.short__info {
+.user-card__info {
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-.user__name {
+.user-card__info__name {
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 5px;
 }
 
-.user__username {
+.user-card__info__username {
   font-size: 0.9rem;
   color: #666;
 }

@@ -1,0 +1,131 @@
+.search-sidebar {
+  width: 25%;
+  min-width: 280px;
+  max-width: 420px;
+  background-color: #ffffff;
+  border-right: 1px solid #d0d8f0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.search-sidebar__buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.search-sidebar__button {
+  width: 20%;
+  aspect-ratio: 1 / 1;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, border 0.2s ease;
+}
+
+.search-sidebar__button:hover {
+  transform: scale(1.08);
+  border: 2px solid #0056d6;
+}
+
+.search-sidebar__search {
+  display: flex;
+  align-items: center;
+  background-color: #f3f6fb;
+  border-radius: 10px;
+  padding: 0.4rem 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.search-sidebar__search svg {
+  color: #666;
+  flex-shrink: 0;
+}
+
+.search-sidebar__search__input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.search-sidebar__search__button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-sidebar__search__button svg {
+  color: #777;
+  transition: color 0.2s ease;
+}
+
+.search-sidebar__search__button:hover svg {
+  color: #000;
+}
+
+.search-sidebar__lists {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #bbb #f2f2f2;
+  padding-right: 0.4rem;
+}
+
+.search-sidebar__lists::-webkit-scrollbar {
+  width: 6px;
+}
+.search-sidebar__lists::-webkit-scrollbar-track {
+  background: #f2f2f2;
+}
+.search-sidebar__lists::-webkit-scrollbar-thumb {
+  background-color: #bbb;
+  border-radius: 4px;
+}
+
+.search-sidebar__lists__users-title,
+.search-sidebar__lists__channels-title {
+  background-color: #e9eef7;
+  padding: 0.4rem 0.6rem;
+  margin: 0.6rem 0;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #444;
+  font-size: 0.9rem;
+}
+
+.channel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  height: 66vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  padding-right: 0.3rem;
+  box-sizing: border-box;
+}
+
+.loading,
+.search-sidebar__lists__no-users-found,
+.search-sidebar__lists__no-channels-found {
+  color: #777;
+  text-align: center;
+  margin: 1rem 0;
+}

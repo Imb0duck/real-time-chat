@@ -1,5 +1,5 @@
 import { create, type StateCreator } from "zustand";
-import { socketService } from "../service/socket-service";
+import { SERVER_URL, socketService } from "../service/socket-service";
 import type { ChannelShortInfo } from "../types/chat";
 import { Routes } from "../consts";
 
@@ -28,7 +28,7 @@ const channelsStore: StateCreator<IChannels> = ((set) => ({
         set({ isLoading: true });
 
         try{
-            const res = await fetch(`${Routes.Channels}?userId=${userId}`);
+            const res = await fetch(`${SERVER_URL}${Routes.Channels}?userId=${userId}`);
             const data = await res.json();
             set({ channels: data });
         }catch(error){
@@ -54,8 +54,8 @@ const channelsStore: StateCreator<IChannels> = ((set) => ({
 
 const useChannelsStore = create<IChannels>()(channelsStore);
 
-export const useActiveChannel = () => useChannelsStore((state) => state.channels);
-export const useIsLoading = () => useChannelsStore((state) => state.isLoading);
+export const useUserChannels = () => useChannelsStore((state) => state.channels);
+export const useIsChannelsLoading = () => useChannelsStore((state) => state.isLoading);
 export const loadChannels = (userId: number) => useChannelsStore.getState().loadChannels(userId);
 export const updateChannels = (userId: number) => useChannelsStore.getState().updateChannels(userId);
 export const stopUpdate = () => useChannelsStore.getState().stopUpdate();

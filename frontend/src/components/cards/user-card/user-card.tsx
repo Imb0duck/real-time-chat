@@ -11,11 +11,11 @@ type UserCardProps = {
 function UserCard({ userInfo, onSelect }: UserCardProps): JSX.Element{
   const {name, username, avatar} = userInfo;
   return (
-  <article className="user__card card" onClick={onSelect}>
-    <img className="card__image" src={avatar || defaultAvatar} onError={(e) => (e.currentTarget.src = defaultAvatar)} alt={username}/>
-    <div className="short__info">
-      <span className="user__name">{name}</span>
-      <span className="user__username">@{username}</span>
+  <article className="user-card card" onClick={onSelect}>
+    <img className="user-card__image card-image" src={avatar || defaultAvatar} onError={(e) => (e.currentTarget.src = defaultAvatar)} alt={username}/>
+    <div className="user-card__info">
+      <span className="user-card__info__name card-name">{name}</span>
+      <span className="user-card__info__username">@{username}</span>
     </div>
   </article>
 )};

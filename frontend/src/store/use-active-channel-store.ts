@@ -1,6 +1,6 @@
 import { create, type StateCreator } from "zustand";
 import type { Channel, Message } from "../types/chat";
-import { socketService } from "../service/socket-service.ts";
+import { SERVER_URL, socketService } from "../service/socket-service.ts";
 import { Routes } from "../consts.ts";
 
 interface IInitialState {
@@ -28,7 +28,7 @@ const activeChannelStore: StateCreator<IChannel> = ((set, get) => ({
         set({ isLoading: true });
 
         try{
-            const res = await fetch(`${Routes.Channels}/${channelId}`);
+            const res = await fetch(`${SERVER_URL}${Routes.Channels}/${channelId}`);
             if (!res.ok) throw new Error('Unable to enter channel');
             const data = await res.json();
             set({ activeChannel: data });

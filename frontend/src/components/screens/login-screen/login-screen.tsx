@@ -21,8 +21,8 @@ function LoginScreen(): JSX.Element{
     if (isLoading) return <Spinner/>;
 
     return (
-        <main className="login__screen">
-            <h1 className="welcome__title">Choose your character</h1>
+        <main className="login-screen">
+            <h1 className="login-screen__title">Choose your character</h1>
             <ul className="user-list list">
                 {userList.map((u) => (
                     <UserCard key={u.id} userInfo={u} onSelect={() => signIn(u.id)}/>

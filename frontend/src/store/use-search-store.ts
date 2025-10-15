@@ -1,6 +1,7 @@
 import { create, type StateCreator } from "zustand";
 import type { ChannelShortInfo, UserShortInfo } from "../types/chat";
 import { Routes } from "../consts";
+import { SERVER_URL } from "../service/socket-service";
 
 interface IInitialState {
     query: string;
@@ -29,8 +30,8 @@ const searchStore: StateCreator<ISearch> = ((set) => ({
         set({ query, isLoading: true });
         try {
             const [users, channels] = await Promise.all([
-                fetch(`${Routes.Users}?q=${query}`).then(res => res.json()),
-                fetch(Routes.Channels).then(res => res.json())
+                fetch(`${SERVER_URL}${Routes.Users}?q=${query}`).then(res => res.json()),
+                fetch(`${SERVER_URL}${Routes.Channels}`).then(res => res.json())
             ]);
             const filteredChannels = channels.filter((c: ChannelShortInfo) => c.name.toLowerCase().includes(query.toLowerCase()));
             set({ userResults: users, channelResults: filteredChannels });
@@ -48,5 +49,6 @@ const useSearchStore = create<ISearch>()(searchStore);
 
 export const useUserResults = () => useSearchStore((state) => state.userResults);
 export const useChannelResults = () => useSearchStore((state) => state.channelResults);
+export const useIsSearchLoading = () => useSearchStore((state) => state.isLoading)
 export const search = (query: string) => useSearchStore.getState().search(query);
 export const clear = () => useSearchStore.getState().clear();
