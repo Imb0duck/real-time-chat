@@ -1,0 +1,39 @@
+.login__screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.welcome__title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+
+.user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 33vw;
+  height: 66vh;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.user-list::-webkit-scrollbar {
+  width: 0px;
+  background-color: transparent;
+}
+.user-list {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

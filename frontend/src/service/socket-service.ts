@@ -3,7 +3,7 @@ import type { ClientToServerEvents, ServerToClientEvents } from "../types/event.
 import type { ChannelShortInfo, Message } from "../types/chat";
 import { Events } from "../consts.ts";
 
-const SERVER_URL = "http://localhost:3001";
+export const SERVER_URL = "http://localhost:3001";
 
 export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io( SERVER_URL, { autoConnect: false });
 

@@ -115,3 +115,4 @@ export const useIsLoading = () => useActiveChannelStore((state) => state.isLoadi
 export const loadChannel = (channelId: string, userId: number) => useActiveChannelStore.getState().loadChannel(channelId, userId);
 export const sendMessage = (message: string, userId: number) => useActiveChannelStore.getState().sendMessage(message, userId);
 export const kickUser = (targetId: number, requesterId: number) => useActiveChannelStore.getState().kickUser(targetId, requesterId);
+export const clearChannel = () => useActiveChannelStore.getState().clearChannel();

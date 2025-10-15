@@ -2,6 +2,7 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
+import cors from 'cors';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -22,13 +23,15 @@ const userToSocket = new Map<number, string>(); //In-memory connections
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 //API routes
 app.get(Routes.Users, (req: Request, res: Response) => {
   const qParam = req.query.q;
   const q = (typeof qParam === "string") ? qParam.toLowerCase() : '';
   const filtered = q ? users.filter((u) => u.name.toLowerCase().includes(q) || u.username.toLowerCase().includes(q)) : users;
-  res.json(filtered);
+  const result = filtered.map(({ id, username, name, avatar }) => ({ id, username, name, avatar }));
+  res.json(result);
 });
 
 app.get(`${Routes.Users}/:id`, (req: Request, res: Response) => {

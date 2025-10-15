@@ -31,6 +31,8 @@ export type User = {
   favorite: boolean;
 };
 
+export type UserShortInfo = Pick<User, "id" | "name" | "username" | "avatar">;
+
 type Adress = {
   streetA: string;
   streetB: string;

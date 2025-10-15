@@ -1,10 +1,10 @@
 import { create, type StateCreator } from "zustand";
-import type { ChannelShortInfo, User } from "../types/chat";
+import type { ChannelShortInfo, UserShortInfo } from "../types/chat";
 import { Routes } from "../consts";
 
 interface IInitialState {
     query: string;
-    userResults: User[];
+    userResults: UserShortInfo[];
     channelResults: ChannelShortInfo[];
     isLoading: boolean;
 }
@@ -33,8 +33,7 @@ const searchStore: StateCreator<ISearch> = ((set) => ({
                 fetch(Routes.Channels).then(res => res.json())
             ]);
             const filteredChannels = channels.filter((c: ChannelShortInfo) => c.name.toLowerCase().includes(query.toLowerCase()));
-            const filteredUsers = users.filter((u: User) => u.username.toLowerCase().includes(query.toLowerCase()));
-            set({ userResults: filteredUsers, channelResults: filteredChannels });
+            set({ userResults: users, channelResults: filteredChannels });
         }catch(error){
             console.log(error);
             throw new Error('Unable to coincidences');
@@ -47,7 +46,7 @@ const searchStore: StateCreator<ISearch> = ((set) => ({
 
 const useSearchStore = create<ISearch>()(searchStore);
 
-export const useFUserResults = () => useSearchStore((state) => state.userResults);
+export const useUserResults = () => useSearchStore((state) => state.userResults);
 export const useChannelResults = () => useSearchStore((state) => state.channelResults);
 export const search = (query: string) => useSearchStore.getState().search(query);
 export const clear = () => useSearchStore.getState().clear();

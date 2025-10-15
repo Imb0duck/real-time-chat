@@ -1,5 +1,5 @@
 import { create, type StateCreator } from "zustand";
-import { socketService } from "../service/socket-service";
+import { SERVER_URL, socketService } from "../service/socket-service";
 import type { User } from "../types/chat";
 import { Routes } from "../consts";
 
@@ -26,7 +26,7 @@ const userStore: StateCreator<IUser> = ((set) => ({
         set({ isLoading: true });
 
         try{
-            const res = await fetch(`${Routes.Users}/${id}`);
+            const res = await fetch(`${SERVER_URL}${Routes.Users}/${id}`);
             if (!res.ok) throw new Error('Unable to sign in');
             const user: User = await res.json();
 
@@ -48,6 +48,6 @@ const userStore: StateCreator<IUser> = ((set) => ({
 const useUserStore = create<IUser>()(userStore);
 
 export const useUser = () => useUserStore((state) => state.user);
-export const useIsLoading = () => useUserStore((state) => state.isLoading);
+export const useIsUserLoading = () => useUserStore((state) => state.isLoading);
 export const signIn = (id: number) => useUserStore.getState().signIn(id);
 export const signOut = () => useUserStore.getState().signOut();
