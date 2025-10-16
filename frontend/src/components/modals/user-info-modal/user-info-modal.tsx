@@ -2,6 +2,7 @@ import type { JSX } from "react";
 import "./user-info-modal.css";
 import { X } from "lucide-react";
 import type { User } from "../../../types/chat";
+import defaultAvatar from '../../../assets/default-avatar.svg';
 
 type UserInfoModalProps = {
   user: User;
@@ -15,7 +16,7 @@ function UserInfoModal({ user, onClose }: UserInfoModalProps): JSX.Element {
         <button className="user-info__close" onClick={onClose}>
           <X size={20} />
         </button>
-        <img src={user.avatar} alt={user.name} className="user-info__avatar" />
+        <img className="user-info__avatar" src={user.avatar} alt={user.name} onError={(e) => (e.currentTarget.src = defaultAvatar)}  />
         <h2 className="user-info__name">{user.name}</h2>
         <p className="user-info__username">@{user.username}</p>
         <div className="user-info__meta">

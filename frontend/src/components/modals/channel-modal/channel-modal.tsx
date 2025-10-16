@@ -5,6 +5,7 @@ import { useUser } from "../../../store/use-user-store";
 import type { UserShortInfo } from "../../../types/chat";
 import { Trash2, LogOut } from "lucide-react";
 import UserCard from "../../cards/user-card/user-card";
+import defaultAvatar from '../../../assets/default-avatar.svg';
 
 type ChannelModalProps = {
   onClose: () => void;
@@ -52,7 +53,7 @@ function ChannelModal({ onClose }: ChannelModalProps): JSX.Element {
         {selectedUser && (
           <div className="modal-user-detail">
             <h4>{selectedUser.name}</h4>
-            <img src={selectedUser.avatar} alt={selectedUser.username} />
+            <img src={selectedUser.avatar} onError={(e) => (e.currentTarget.src = defaultAvatar)} alt={selectedUser.username} />
             <p><strong>Username:</strong> @{selectedUser.username}</p>
             {isCreator && id !== selectedUser.id && (
                 <button className="kick-btn" onClick={(e) => { e.stopPropagation(); handleKick(selectedUser.id); setSelectedUser(null)}}>Kick</button>

@@ -42,6 +42,7 @@ function SearchSidebar(): JSX.Element {
     //Sidebar to search users & channels
     return (
         <section className="search-sidebar sidebar">
+            {/* Create new channel & quit */}
             <div className="search-sidebar__buttons">
                 <button className="search-sidebar__button action-button" onClick={() => setIsModalOpen(true)}><PlusCircle size={20} /></button>
                 <button className="search-sidebar__button action-button" onClick={signOut}><LogOut size={20}/></button>
@@ -52,6 +53,7 @@ function SearchSidebar(): JSX.Element {
                 {query && (<button className="search-sidebar__search__button close-button" onClick={handleClearSearch}><X size={18}/></button>)}
             </div>
 
+             {/* Lists of matches */}
             <div className="search-sidebar__lists">
                 {query ? ( !isSearchLoading ?
                         <div className="search-sidebar__lists">
@@ -73,16 +75,16 @@ function SearchSidebar(): JSX.Element {
                 )}
             </div>
 
+            {/* Modal window to create new channel */}
             {isModalOpen && (
-                <CreateChannelModal
-                    onClose={() => setIsModalOpen(false)}
-                    onCreate={(name) => {
+                <CreateChannelModal onClose={() => setIsModalOpen(false)} onCreate={(name) => {
                         if (user) createChannel(name, user.id);
                         setIsModalOpen(false);
                     }}
                 />
             )}
 
+            {/* Modal window with user info */}
             {selectedUser && (
                 <UserInfoModal user={selectedUser} onClose={closeModal}/>
             )}

@@ -1,13 +1,13 @@
 import { useState, type JSX } from "react";
 import "./create-channel-modal.css";
 
-interface Props {
+type CreateChannelModalProps = {
     onClose: () => void;
     onCreate: (name: string) => void;
 }
 
 //Modal window to create a new channel
-function CreateChannelModal({ onClose, onCreate }: Props): JSX.Element {
+function CreateChannelModal({ onClose, onCreate }: CreateChannelModalProps): JSX.Element {
     const [name, setName] = useState('');
 
     return (
