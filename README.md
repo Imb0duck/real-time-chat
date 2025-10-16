@@ -9,21 +9,30 @@
 
 Install all dependencies in both projects:
 
+```bash
 npm install
 npm run install:alla
+```
 
 ## Development
 
 Run both backend and frontend concurrently:
+
+```bash
 npm run dev
+```
 
 This will start:
 
+```bash
 Backend on http://localhost:3001
 Frontend on http://localhost:5173
+```
 
 For multi-client testing (two browser tabs as two users):
 
+```bash
 npm run dev:multi
+```
 
 That will start two frontend instances (ports 5173 and 5174) plus the backend.
