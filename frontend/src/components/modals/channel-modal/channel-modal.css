@@ -1,0 +1,135 @@
+.channel-modal__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(20, 20, 20, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.channel-modal {
+  background: var(--color-bg, #fff);
+  color: var(--color-text, #111);
+  border-radius: 1rem;
+  width: 90%;
+  max-width: 500px;
+  padding: 1.5rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  background: #e6e6e6;
+  transition: background 0.2s ease;
+}
+.modal-btn:hover {
+  background: #dcdcdc;
+}
+
+.modal-btn.danger {
+  background: #f66;
+  color: white;
+}
+.modal-btn.danger:hover {
+  background: #d33;
+}
+
+.modal-subtitle {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.modal-user-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+
+.modal-user-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+.modal-user-card:hover {
+  background: #f2f2f2;
+}
+.modal-user-card.selected {
+  background: #e0f5e0;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 0.6rem;
+}
+
+.user-info {
+  flex: 1;
+}
+.user-name {
+  font-weight: 500;
+}
+.user-username {
+  display: block;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.kick-btn {
+  background: #ff4d4f;
+  border: none;
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+}
+.kick-btn:hover {
+  background: #d9363e;
+}
+
+.modal-user-detail {
+  border-top: 1px solid #ddd;
+  padding-top: 1rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+.modal-user-detail img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin: 0.5rem 0;
+}
+.modal-user-detail p {
+  font-size: 0.9rem;
+  margin: 0.2rem 0;
+}

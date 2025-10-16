@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import type { ClientToServerEvents, ServerToClientEvents } from "../types/event.ts";
-import type { ChannelShortInfo, Message } from "../types/chat";
+import type { ChannelShortInfo, Message, UserShortInfo } from "../types/chat";
 import { Events } from "../consts.ts";
 
 export const SERVER_URL = "http://localhost:3001";
@@ -43,7 +43,7 @@ export const socketService = {
     socket.on(Events.Message, cb);
   },
 
-  onParticipants: (cb: (participants: number[]) => void) => {
+  onParticipants: (cb: (participants: UserShortInfo[]) => void) => {
     socket.on(Events.Participants, cb);
   },
 

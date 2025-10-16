@@ -75,3 +75,10 @@
   transform: scale(1.05);
   border: 2px solid #0056d6;
 }
+
+.modal__button.action-button:disabled {
+  background-color: #ccc;
+  color: #666;
+  border: 1px solid #999;
+  opacity: 0.7;
+}

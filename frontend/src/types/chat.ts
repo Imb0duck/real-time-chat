@@ -2,6 +2,7 @@ export type Message = {
   id: string;
   channelId: string;
   senderId: number;
+  senderUsername: string;
   text: string;
   timestamp: number;
 };
@@ -10,7 +11,7 @@ export type Channel = {
   id: string;
   name: string;
   creatorId: number;
-  participants: number[];
+  participants: UserShortInfo[];
   messages: Message[];
 };
 

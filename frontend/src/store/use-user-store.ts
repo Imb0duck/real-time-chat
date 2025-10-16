@@ -20,6 +20,7 @@ const initialState: IInitialState = {
     isLoading: false
 }
 
+//Control authorized user state
 const userStore: StateCreator<IUser> = ((set) => ({
     ...initialState,
     signIn: async (id: number) => {

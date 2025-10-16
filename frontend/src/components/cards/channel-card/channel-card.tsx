@@ -3,12 +3,12 @@ import type { ChannelShortInfo } from "../../../types/chat";
 import channelIcon from "../../../assets/chat.svg"
 import "./channel-card.css";
 
-interface Props {
+type ChannelCardProps = {
     channel: ChannelShortInfo;
     onSelect: () => void;
 }
 
-function ChannelCard({ channel, onSelect }: Props): JSX.Element {
+function ChannelCard({ channel, onSelect }: ChannelCardProps): JSX.Element {
     const { name } = channel;
     
     return (

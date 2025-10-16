@@ -22,6 +22,7 @@ const initialState: IInitialState = {
     isLoading: false
 }
 
+//Control list of channels which user joined
 const channelsStore: StateCreator<IChannels> = ((set) => ({
     ...initialState,
     loadChannels: async (userId: number) => {
@@ -40,8 +41,10 @@ const channelsStore: StateCreator<IChannels> = ((set) => ({
     },
     updateChannels: (userId: number) => {
         socketService.onChannelsUpdated((list: ChannelShortInfo[]) => {
-            const userChannels = list.filter((ch) => ch.participants?.includes(userId));
-            set({ channels: userChannels });
+            const userChannels = list.filter((ch) =>
+            ch.participants?.some((p) => p.id === userId)
+        );
+        set((state) => ({...state, channels: userChannels,}));
         });
     },
     stopUpdate: () => {

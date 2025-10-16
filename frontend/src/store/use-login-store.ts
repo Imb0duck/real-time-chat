@@ -20,6 +20,7 @@ const initialState: IInitialState = {
     isLoading: false
 }
 
+//Just imitation of authorization on mock-data
 const loginStore: StateCreator<ILogin> = ((set) => ({
     ...initialState,
     setUsers: async () => {

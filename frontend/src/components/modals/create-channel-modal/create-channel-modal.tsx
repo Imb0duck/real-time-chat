@@ -6,6 +6,7 @@ interface Props {
     onCreate: (name: string) => void;
 }
 
+//Modal window to create a new channel
 function CreateChannelModal({ onClose, onCreate }: Props): JSX.Element {
     const [name, setName] = useState('');
 

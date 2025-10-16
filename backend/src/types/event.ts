@@ -1,4 +1,4 @@
-import type { Message } from "./chat.ts";
+import type { Message, UserShortInfo } from "./chat.ts";
 
 export type ClientToServerEvents = {
   "create-channel": (payload: { name: string; creatorId: number }) => void;
@@ -15,9 +15,8 @@ export type ClientToServerEvents = {
 };
 
 export type ServerToClientEvents = {
-  "channels-updated": (channels: Array<{ id: string; name: string; participants: number[] }>) => void;
-  "participants-updated": (participants: number[]) => void;
-  "channel-history": (messages: Message[]) => void;
+  "channels-updated": (channels: Array<{ id: string; name: string; participants: UserShortInfo[] }>) => void;
+  "participants-updated": (participants: UserShortInfo[]) => void;
   "channel-deleted": (channelId: string) => void;
   "message": (message: Message) => void;
   "kicked": (channelId: string) => void;

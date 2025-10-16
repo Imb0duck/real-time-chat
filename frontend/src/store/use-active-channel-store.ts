@@ -1,5 +1,5 @@
 import { create, type StateCreator } from "zustand";
-import type { Channel, Message } from "../types/chat";
+import type { Channel, Message, UserShortInfo } from "../types/chat";
 import { SERVER_URL, socketService } from "../service/socket-service.ts";
 import { Routes } from "../consts.ts";
 
@@ -10,8 +10,9 @@ interface IInitialState {
 
 interface IActions {
     loadChannel: (hannelId: string, userId: number) => Promise<void>;
-    sendMessage: (message: string, userId: number) => Promise<void>;
+    sendMessage: (message: string, userId: number, username: string) => Promise<void>;
     kickUser: (targetId: number, requesterId: number) => Promise<void>;
+    deleteChannel: (userId: number) => void;
     clearChannel: () => void;
 }
 
@@ -22,6 +23,7 @@ const initialState: IInitialState = {
     isLoading: false
 }
 
+//Control state of current channel && subscribe on server action
 const activeChannelStore: StateCreator<IChannel> = ((set, get) => ({
     ...initialState,
     loadChannel: async (channelId: string, userId: number) => {
@@ -43,7 +45,7 @@ const activeChannelStore: StateCreator<IChannel> = ((set, get) => ({
                     : null,
                 }));
             });
-            socketService.onParticipants((participants: number[]) => {
+            socketService.onParticipants((participants: UserShortInfo[]) => {
                 set((state) => ({
                     activeChannel: state.activeChannel
                     ? { ...state.activeChannel, participants }
@@ -67,14 +69,13 @@ const activeChannelStore: StateCreator<IChannel> = ((set, get) => ({
             set({ isLoading: false });
         }
     },
-    sendMessage: async (message: string, userId: number) => {
+    sendMessage: async (message: string, userId: number, username: string) => {
         const current = get().activeChannel;
         if (!current) return;
-        const msg: Message = { id: crypto.randomUUID(), channelId: current.id, senderId: userId, text: message, timestamp: Date.now()};
+        const msg: Message = { id: crypto.randomUUID(), channelId: current.id, senderId: userId, senderUsername: username, text: message, timestamp: Date.now()};
 
         try{
             socketService.sendMessage(current.id, msg);
-            set({ activeChannel: { ...current, messages: [...current.messages, msg]} });
         }catch(error){
             console.log(error);
             throw new Error('Unable to send message');
@@ -111,8 +112,9 @@ const activeChannelStore: StateCreator<IChannel> = ((set, get) => ({
 const useActiveChannelStore = create<IChannel>()(activeChannelStore);
 
 export const useActiveChannel = () => useActiveChannelStore((state) => state.activeChannel);
-export const useIsLoading = () => useActiveChannelStore((state) => state.isLoading);
+export const useIsActiveChannelLoading = () => useActiveChannelStore((state) => state.isLoading);
 export const loadChannel = (channelId: string, userId: number) => useActiveChannelStore.getState().loadChannel(channelId, userId);
-export const sendMessage = (message: string, userId: number) => useActiveChannelStore.getState().sendMessage(message, userId);
+export const sendMessage = (message: string, userId: number, username: string) => useActiveChannelStore.getState().sendMessage(message, userId, username);
 export const kickUser = (targetId: number, requesterId: number) => useActiveChannelStore.getState().kickUser(targetId, requesterId);
+export const deleteChannel = (userId: number) => useActiveChannelStore.getState().deleteChannel(userId);
 export const clearChannel = () => useActiveChannelStore.getState().clearChannel();

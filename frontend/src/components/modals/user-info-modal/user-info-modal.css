@@ -1,0 +1,61 @@
+.user-info__overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.user-info__modal {
+  background: white;
+  border-radius: 16px;
+  width: 360px;
+  padding: 1.5rem;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.user-info__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.user-info__avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  display: block;
+  object-fit: cover;
+}
+
+.user-info__name {
+  font-weight: 600;
+  text-align: center;
+  font-size: 1.3rem;
+  margin-bottom: 0.3rem;
+}
+
+.user-info__username {
+  text-align: center;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.user-info__bio {
+  font-size: 0.95rem;
+  color: #444;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.user-info__meta {
+  font-size: 0.9rem;
+  color: #555;
+}

@@ -4,6 +4,7 @@ import Spinner from "../../spinner/spinner";
 import { loadChannels, stopUpdate, updateChannels } from "../../../store/use-channels-store";
 import SearchSidebar from "../../sidebars/search-sidebar/search-sidebar";
 import "./chat-screen.css";
+import ActiveChat from "../../active-chat/active-chat";
 
 function ChatScreen(): JSX.Element{
     const user = useUser();
@@ -24,7 +25,7 @@ function ChatScreen(): JSX.Element{
     return (
         <main className="chat-screen">
             <SearchSidebar />
-            
+            <ActiveChat/>
         </main>
     );
 };

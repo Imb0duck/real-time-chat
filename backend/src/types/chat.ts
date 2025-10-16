@@ -2,6 +2,7 @@ export type Message = {
   id: string;
   channelId: string;
   senderId: number;
+  senderUsername: string;
   text: string;
   timestamp: number;
 };
@@ -28,6 +29,8 @@ export type User = {
   accountHistory: Transaction[];
   favorite: boolean;
 };
+
+export type UserShortInfo = Pick<User, "id" | "name" | "username" | "avatar">;
 
 type Adress = {
   streetA: string;
