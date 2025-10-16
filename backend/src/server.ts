@@ -3,20 +3,23 @@ import type { Request, Response } from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
-import { readFileSync } from 'fs';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import type { Channel, User } from './types/chat.ts';
 import type { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from './types/event.ts';
 import { Events, Routes } from './consts.js';
 
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Load mock users
-const users: User[] = JSON.parse(
-  readFileSync(join(__dirname, "users.json"), "utf-8")
-);
+const usersPath = join(__dirname, "users.json");
+if (!fs.existsSync(usersPath)) {
+  throw new Error(`users.json not found at ${usersPath}`);
+}
+const users: User[] = JSON.parse(fs.readFileSync(usersPath, "utf-8"));
 
 // In-memory data structures
 const channels: Record<string, Channel> = {};
